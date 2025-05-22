@@ -1,13 +1,15 @@
-FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-devel
+FROM nvcr.io/nvidia/cuda:12.9.0-cudnn-devel-ubuntu22.04
 
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
+    python3 \
+    python3-pip \
+    python3-venv \
     git \
     vim \
     build-essential \
     libcairo2 \
-    cuda-compiler-12-4 \
     libaio-dev \
     && rm -rf /var/lib/apt/lists/*
 
