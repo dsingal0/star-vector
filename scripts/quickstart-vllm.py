@@ -5,7 +5,7 @@ model_name = "starvector/starvector-1b-im2svg"
 # model_name = "starvector/starvector-8b-im2svg"
 
 sampling_params = SamplingParams(
-    temperature=0.8, 
+    temperature=0.8,
     top_p=0.95,
     max_tokens=7900,
     n=1,
@@ -17,17 +17,16 @@ sampling_params = SamplingParams(
 llm = LLM(model=model_name, trust_remote_code=True, max_model_len=8192)
 
 prompt_start = "<image-start>"
-images = [Image.open('assets/examples/sample-18.png')]
+images = [Image.open("assets/examples/sample-18.png")]
 model_inputs_vllm = []
 for i in range(len(images)):
-    model_inputs_vllm.append({
-        "prompt": prompt_start,
-        "multi_modal_data": {"image": images[i]}
-    })
-    
-outputs = llm.generate(model_inputs_vllm, 
-    sampling_params=sampling_params, 
-    use_tqdm=False)
+    model_inputs_vllm.append(
+        {"prompt": prompt_start, "multi_modal_data": {"image": images[i]}}
+    )
+
+outputs = llm.generate(
+    model_inputs_vllm, sampling_params=sampling_params, use_tqdm=False
+)
 
 completions = []
 for i in range(len(outputs)):

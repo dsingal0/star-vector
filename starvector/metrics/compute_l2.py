@@ -1,9 +1,9 @@
 from torchvision.transforms import ToTensor
 import torch.nn.functional as F
 from starvector.metrics.base_metric import BaseMetric
-import torch
 
-class L2DistanceCalculator(BaseMetric): 
+
+class L2DistanceCalculator(BaseMetric):
     def __init__(self, config=None, masked_l2=False):
         super().__init__()
         self.class_name = self.__class__.__name__
@@ -12,8 +12,8 @@ class L2DistanceCalculator(BaseMetric):
         self.masked_l2 = masked_l2
 
     def l2_distance(self, **kwargs):
-        image1 = kwargs.get('gt_im')
-        image2 = kwargs.get('gen_im')
+        image1 = kwargs.get("gt_im")
+        image2 = kwargs.get("gen_im")
         image1_tensor = ToTensor()(image1)
         image2_tensor = ToTensor()(image2)
 
@@ -32,6 +32,3 @@ class L2DistanceCalculator(BaseMetric):
         # Compute mean squared error
         mse = F.mse_loss(image1_tensor, image2_tensor)
         return mse.item()
-
-
-

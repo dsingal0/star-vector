@@ -1,8 +1,8 @@
-
 from starvector.model.starvector_arch import StarVectorForCausalLM, StarVectorConfig
 from starvector.data.base import ImageTrainProcessor
 from starvector.util import dtype_mapping
 from transformers import AutoConfig
+
 
 def load_pretrained_model(model_path, device="cuda", **kwargs):
     model = StarVectorForCausalLM.from_pretrained(model_path, **kwargs).to(device)
@@ -10,6 +10,7 @@ def load_pretrained_model(model_path, device="cuda", **kwargs):
     image_processor = ImageTrainProcessor()
     context_len = model.model.query_length + model.model.max_length
     return tokenizer, model, image_processor, context_len
+
 
 def model_builder(config):
     model_name = config.model.get("model_name", False)
@@ -27,7 +28,9 @@ def model_builder(config):
     if model_name:
         model = StarVectorForCausalLM.from_pretrained(model_name, **args)
     else:
-        starcoder_model_config = AutoConfig.from_pretrained(config.model.starcoder_model_name)
+        starcoder_model_config = AutoConfig.from_pretrained(
+            config.model.starcoder_model_name
+        )
 
         starvector_config = StarVectorConfig(
             max_length_train=config.model.max_length,
@@ -43,7 +46,5 @@ def model_builder(config):
             num_kv_heads=getattr(starcoder_model_config, "num_key_value_heads", None),
         )
         model = StarVectorForCausalLM(starvector_config, **args)
-        
-    return model
 
-    
+    return model

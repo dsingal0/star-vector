@@ -13,4 +13,3 @@ DEFAULT_IM_END_TOKEN = "<im_end>"
 IMAGE_PLACEHOLDER = "<image-placeholder>"
 
 CLIP_QUERY_LENGTH = 257
-

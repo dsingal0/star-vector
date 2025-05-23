@@ -1,20 +1,23 @@
-import torch
-import torch.nn as nn
 from torch.distributed.fsdp.wrap import _module_wrap_policy, _or_policy
 from functools import partial
 from starvector.model.models.starvector_base import StarVectorBase
 from transformers import AutoImageProcessor
 
+
 class StarVectorStarCoder2(StarVectorBase):
     def __init__(self, config, **kwargs):
         super().__init__(config, **kwargs)
 
-        self.processor = AutoImageProcessor.from_pretrained(config._name_or_path, trust_remote_code=True)
+        self.processor = AutoImageProcessor.from_pretrained(
+            config._name_or_path, trust_remote_code=True
+        )
 
     def _get_svg_transformer(self, config, **kwargs):
-        from starvector.model.llm.starcoder2 import StarCoderModel # This is a different model than V1, uses StarCoder2
-        return StarCoderModel(config, **kwargs)
+        from starvector.model.llm.starcoder2 import (
+            StarCoderModel,
+        )  # This is a different model than V1, uses StarCoder2
 
+        return StarCoderModel(config, **kwargs)
 
     def get_fsdp_wrapping_policy(self):
         """V2 specific FSDP wrapping policy"""
@@ -48,7 +51,12 @@ class StarVectorStarCoder2(StarVectorBase):
 
     def _get_svg_text(self, svg_list):
         """V2 specific SVG text preparation"""
-        return [t + self.svg_transformer.svg_end_token + self.svg_transformer.tokenizer.eos_token for t in svg_list]
+        return [
+            t
+            + self.svg_transformer.svg_end_token
+            + self.svg_transformer.tokenizer.eos_token
+            for t in svg_list
+        ]
 
     def _get_im2svg_specific_kwargs(self, kwargs):
         """V2 specific generation kwargs"""
@@ -59,5 +67,5 @@ class StarVectorStarCoder2(StarVectorBase):
     def _get_text2svg_specific_kwargs(self, kwargs):
         """V2 specific text2svg generation kwargs"""
         return {
-            'eos_token_id': self.svg_transformer.tokenizer.eos_token_id,
+            "eos_token_id": self.svg_transformer.tokenizer.eos_token_id,
         }

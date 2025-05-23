@@ -4,8 +4,8 @@ from .starvector_vllm_svg_validator import StarVectorVLLMValidator
 from .starvector_vllm_api_svg_validator import StarVectorVLLMAPIValidator
 
 __all__ = [
-    'SVGValidator', 
-    'StarVectorHFSVGValidator', 
-    'StarVectorVLLMValidator',
-    'StarVectorVLLMAPIValidator'
-] 
+    "SVGValidator",
+    "StarVectorHFSVGValidator",
+    "StarVectorVLLMValidator",
+    "StarVectorVLLMAPIValidator",
+]
