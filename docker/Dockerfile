@@ -15,15 +15,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 
-# Install Jupyter Notebook, clone and install star-vector and dependencies
-RUN pip install --upgrade pip \
-    && git clone https://github.com/dsingal0/star-vector.git /tmp/star-vector \
-    && pip install /tmp/star-vector \
-    && pip install flash-attn --no-build-isolation \
-    && rm -rf /tmp/star-vector
+# Install Jupyter Notebook and install star-vector from local directory
+RUN pip install --upgrade pip setuptools wheel packaging
 
-#COPY . /tmp/star-vector
-#RUN pip install /tmp/star-vector
+# Copy and install star-vector
+COPY . /tmp/star-vector
+RUN pip install /tmp/star-vector
+
+# Install flash-attn with build dependencies
+RUN pip install flash-attn --no-build-isolation
 
 # Cleanup unneeded packages
 RUN apt-get clean \
