@@ -53,12 +53,10 @@ dependencies = [
     "Pillow",
     "protobuf",
     "openai",
-    "flash_attn"
-
 ]
 
 [project.optional-dependencies]
-train = ["deepspeed", "ninja", "wandb"]
+train = ["ninja", "wandb"]
 
 [project.urls]
 "Homepage" = "https://starvector.github.io"
