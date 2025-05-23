@@ -14,10 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libaio-dev \
     && rm -rf /var/lib/apt/lists/*
 
-
-# Install Jupyter Notebook and install star-vector from local directory
-RUN pip install --upgrade pip setuptools wheel packaging
-
 # Copy and install star-vector
 COPY . /tmp/star-vector
 RUN pip install /tmp/star-vector
