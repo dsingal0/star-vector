@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 # Install Jupyter Notebook, clone and install star-vector and dependencies
-RUN pip install --upgrade pip && pip install jupyter deepspeed \
+RUN pip install --upgrade pip \
     && git clone https://github.com/dsingal0/star-vector.git /tmp/star-vector \
     && pip install /tmp/star-vector \
     && rm -rf /tmp/star-vector
