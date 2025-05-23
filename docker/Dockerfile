@@ -23,7 +23,7 @@ COPY . /tmp/star-vector
 RUN pip install /tmp/star-vector
 
 # Install flash-attn with build dependencies
-RUN pip install flash-attn --no-build-isolation
+#RUN pip install flash-attn --no-build-isolation
 
 # Cleanup unneeded packages
 RUN apt-get clean \
