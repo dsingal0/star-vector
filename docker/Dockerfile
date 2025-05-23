@@ -24,16 +24,5 @@ COPY . /tmp/star-vector
 RUN pip install /tmp/star-vector
 
 # Cleanup unneeded packages
-RUN apt-get purge -y --auto-remove \
-    git \
-    build-essential \
-    && apt-get clean \
+RUN apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# Expose Jupyter Notebook port
-EXPOSE 8888
-
-WORKDIR /workspace
-
-# Launch Jupyter Notebook
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]
