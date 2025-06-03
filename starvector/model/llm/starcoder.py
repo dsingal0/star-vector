@@ -1,21 +1,24 @@
 import torch.nn as nn
 from transformers import (
-    AutoConfig, 
-    AutoModelForCausalLM, 
+    AutoConfig,
+    AutoModelForCausalLM,
     AutoTokenizer,
-    )
+)
+
 
 class StarCoderModel(nn.Module):
     def __init__(self, config, **kwargs):
         super(StarCoderModel, self).__init__()
 
         self.init_tokenizer(config.starcoder_model_name)
-        
+
         self.max_length = config.max_length
-        model_config = AutoConfig.from_pretrained(config.starcoder_model_name, trust_remote_code=True)
+        model_config = AutoConfig.from_pretrained(
+            config.starcoder_model_name, trust_remote_code=True
+        )
         kwargs = {}
-        kwargs['trust_remote_code'] = True
-        kwargs['torch_dtype'] = config.torch_dtype
+        kwargs["trust_remote_code"] = True
+        kwargs["torch_dtype"] = config.torch_dtype
 
         # Configure special tokens for generation
         model_config.eos_token_id = self.tokenizer.eos_token_id
@@ -26,14 +29,21 @@ class StarCoderModel(nn.Module):
             model_config._attn_implementation = "flash_attention_2"
         except ImportError:
             config.use_flash_attn = False
-        
+
         # model = GPTBigCodeForCausalLM(config=model_config)
-        model = AutoModelForCausalLM.from_pretrained(config.starcoder_model_name, config=model_config, **kwargs)
+        model = AutoModelForCausalLM.from_pretrained(
+            config.starcoder_model_name, config=model_config, **kwargs
+        )
+        # Handle meta tensor case for Flash Attention 2.0
+        if any(t.is_meta for t in model.parameters()):
+            model.to_empty(device="cuda")
+        else:
+            model.to("cuda")
         model.resize_token_embeddings(len(self.tokenizer))
         self.transformer = model
 
         # Prompt the model after image
-        self.prompt = '<svg'
+        self.prompt = "<svg"
 
     def init_tokenizer(self, model_name):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
@@ -41,11 +51,13 @@ class StarCoderModel(nn.Module):
         if self.tokenizer.eos_token_id is None:
             self.tokenizer.add_special_tokens({"eos_token": "[EOS]"})
         if self.tokenizer.pad_token_id is None:
-            self.tokenizer.add_special_tokens({"pad_token": "[PAD]"})       
-        
+            self.tokenizer.add_special_tokens({"pad_token": "[PAD]"})
+
         self.svg_start_token = "<svg-start>"
         self.image_start_token = "<image-start>"
         self.text_start_token = "<caption-start>"
-        
-        self.tokenizer.add_tokens([self.svg_start_token, self.image_start_token, self.text_start_token])
+
+        self.tokenizer.add_tokens(
+            [self.svg_start_token, self.image_start_token, self.text_start_token]
+        )
         self.svg_start_token_id = self.tokenizer.encode(self.svg_start_token)[0]

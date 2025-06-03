@@ -2,13 +2,14 @@ from starvector.metrics.util import AverageMeter
 from tqdm import tqdm
 import math
 
+
 class BaseMetric:
     def __init__(self):
         self.meter = AverageMeter()
 
     def reset(self):
         self.meter.reset()
-        
+
     def calculate_score(self, batch, update=True):
         """
         Batch: {"gt_im": [PIL Image], "gen_im": [Image]}
@@ -44,8 +45,9 @@ class BaseMetric:
         """
         This method should be overridden by subclasses to provide the specific metric computation.
         """
-        raise NotImplementedError("The metric method must be implemented by subclasses.")
-    
+        raise NotImplementedError(
+            "The metric method must be implemented by subclasses."
+        )
+
     def get_average_score(self):
         return self.meter.avg
-

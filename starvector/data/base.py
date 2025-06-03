@@ -4,12 +4,13 @@ from starvector.util import instantiate_from_config
 import numpy as np
 from datasets import load_dataset
 
+
 class SVGDatasetBase(Dataset):
     def __init__(self, dataset_name, split, im_size, num_samples=-1, **kwargs):
         self.split = split
         self.im_size = im_size
 
-        transforms = kwargs.get('transforms', False)
+        transforms = kwargs.get("transforms", False)
         if transforms:
             self.transforms = instantiate_from_config(transforms)
             self.p = self.transforms.p
@@ -17,10 +18,10 @@ class SVGDatasetBase(Dataset):
             self.transforms = None
             self.p = 0.0
 
-        normalization = kwargs.get('normalize', False)
+        normalization = kwargs.get("normalize", False)
         if normalization:
-            mean = tuple(normalization.get('mean', None))
-            std = tuple(normalization.get('std', None))
+            mean = tuple(normalization.get("mean", None))
+            std = tuple(normalization.get("std", None))
         else:
             mean = None
             std = None
@@ -32,7 +33,7 @@ class SVGDatasetBase(Dataset):
 
     def __len__(self):
         return len(self.data_json)
-    
+
     def get_svg_and_image(self, svg_str, sample_id):
         do_augment = np.random.choice([True, False], p=[self.p, 1 - self.p])
         svg, image = None, None
@@ -42,14 +43,18 @@ class SVGDatasetBase(Dataset):
             try:
                 svg, image = self.transforms.augment(svg_str)
             except Exception as e:
-                print(f"Error augmenting {sample_id} due to {str(e)}, trying to rasterize SVG")
+                print(
+                    f"Error augmenting {sample_id} due to {str(e)}, trying to rasterize SVG"
+                )
 
         # If augmentation failed or wasn't attempted, try to rasterize the SVG
         if svg is None or image is None:
             try:
                 svg, image = svg_str, rasterize_svg(svg_str, self.im_size)
             except Exception as e:
-                print(f"Error rasterizing {sample_id} due to {str(e)}, using placeholder image")
+                print(
+                    f"Error rasterizing {sample_id} due to {str(e)}, using placeholder image"
+                )
                 svg = use_placeholder()
                 image = rasterize_svg(svg, self.im_size)
 
@@ -60,7 +65,7 @@ class SVGDatasetBase(Dataset):
             image = rasterize_svg(svg)
 
         # Process the image
-        if 'siglip' in self.image_processor:
+        if "siglip" in self.image_processor:
             image = self.processor(image).pixel_values[0]
         else:
             image = self.processor(image)
