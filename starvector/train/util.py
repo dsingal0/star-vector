@@ -80,8 +80,6 @@ def load_checkpoint(model, checkpoint_dir):
     return model
 
 
-
-
 def push_model_to_hub(model, new_model_name, tokenizer, processor):
     # Register the model for HF
     AutoConfig.register("starvector", StarVectorConfig)
